@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" /> 
+	<title>Mapa Ejemplo</title>
+
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript" src="Highmaps-4.2.1/js/highmaps.js"></script>
+	<script type="text/javascript" src="Highmaps-4.2.1/js/modules/data.js"></script>
+	<script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
+
+</head>
+
+<body>
+	<script>
+	$(function () {
+
+		//Instanciate the map
+		$('#container').highcharts('Map', {
+			chart: {
+				spacingBottom: 20
+			},
+
+			title: {
+				text: 'Mapa político mundial'
+			},
+
+			legend: {
+				enabled: true
+			},
+
+			plotOptions: {
+				map: {
+					allAreas: false,
+					joinBy: ['iso-a2', 'code'],
+					dataLabels: {
+						enabled: false,
+						color: 'white',
+						formatter: function() {
+							if (this.point.properties && 
+								this.point.properties.labelrank.toString() < 5) {
+								return this.point.properties['iso-a2'];
+							}
+						},
+						format: null,
+						style: {
+							fontWeigth: 'bold'
+						}
+					},
+					mapData: Highcharts.maps['custom/world'],
+					tooltip: {
+						headerFormat: '',
+						pointFormat: '{point.name}: <b>{series.name} </b>'
+					}
+				}
+			},
+
+			series: [{
+				name: 'Republic',
+				data: $.map(['AO', 'BO', 'BA', 'BF', 'BI', 'CM', 'CV', 'CF', 'TD', 'CL', 'CO', 'CR', 'CI', 'CD', 'DJ', 'EC', 'EG', 'SV', 'FM', 'FJ', 'FI', 'FR', 'GA', 'GE', 'GH', 'GN', 'GW', 'HN', 'HU', 'IN', 'IL', 'KE', 'KI', 'KG', 'LB', 'LR', 'MG', 'MV', 'ML', 'MH', 'MR', 'ME', 'MZ', 'NA', 'NR', 'NP', 'NI', 'CY', 'PW', 'PY', 'PE', 'PH', 'PR', 'TW', 'IE', 'CD', 'RO', 'RU', 'ST', 'SC', 'SL', 'SO', 'ZA', 'KR', 'LK', 'SY', 'TZ', 'GM', 'TG', 'TN', 'UG', 'UA', 'UY', 'VU', 'YE', 'ZM'], function (code) {
+					return { code: code};
+				})
+			}, {
+				name: 'Dictatorship',
+				data: $.map(['BY', 'CM', 'CN', 'CU', 'EG', 'GQ', 'ER', 'ET', 'IR', 'KZ',
+				 'LY', 'MG', 'MM', 'KN', 'RW', 'SD', 'SY', 'TN', 'TM', 'UZ', 'VN', 'ZW'], function (code) {
+					return {code: code};
+				})
+			}, {
+				name: 'Absolute Monarchy',
+				data: $.map(['BN', 'OM', 'QA', 'SA', 'SZ', 'AE', 'VA'], function (code) {
+					return {code: code};
+				})
+			}, {
+				name: 'Federal Republic',
+				data: $.map(['AR', 'AT', 'BA', 'BR', 'KM', 'ET', 'DE', 'IN', 'MX', 'NP', 'NG', 'PK', 'SD', 'CH', 'US', 'VE'], function (code) {
+					return {code: code};
+				})
+			}, {
+				name: 'Constitutional Monarchy',
+				data: $.map(['AD', 'AW', 'AU', 'BH', 'BB', 'BZ','BT', 'KH', 'CA', 'DK', 'GB', 'GD', 'IM',
+					'JM', 'JP', 'JE', 'JO', 'NL', 'KW', 'LS', 'LI', 'LU', 'MY', 'MC', 'MA', 'NZ', 'NU', 
+					'GB', 'NO', 'PG', 'QA', 'KN', 'LC', 'VC', 'WS', 'GB', 'SB', 'ES', 'SE', 'TH', 'BS', 
+					'TK', 'TO', 'TV', 'ZA'], function (code) {
+					return {code: code};
+				})
+			}]
+
+		});
+	});
+	</script>
+
+	<div id="container" style="width:100%; height:600px;"></div>
+	<input id="input1"> Hola que tal </input>
+</body>
+
+</html>
