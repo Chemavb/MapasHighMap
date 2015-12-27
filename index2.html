@@ -12,12 +12,41 @@
 	<script type="text/javascript" src="Highmaps-4.2.1/js/modules/data.js"></script>
 	<script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
 
+	<style>
+	#textoSalida {
+		background-color: white;
+		color: black;
+		text-align: left;
+		font-family: calibri;
+		font-size: 125%;
+		background-color: #e1e1e1;
+
+	}
+	.parrafo1 {
+		margin-left: 200px;
+	}
+	</style>
 </head>
 
 <body>
 	<script>
+	var mapaSeleccionado = {};
+	var strPaisesSeleccionados = [];
+	var strPaisesNoSeleccionados = [];
+	var strPaisesVacios = [];
+
+
+	//Objeto mapa político relleno
+	var mapaPolitico;
+
+	//Objeto mapa vacío
+	var mapaVacio;
+
+	//Carga de json con paises, códigos y capitales
 	var data;
 	$.getJSON("countries.json", function(data1) { data = data1 });
+
+
 	function escribePaisCapital(code) {
 		//TODO. Busca en un json el pais, devuelve [pais, capital, bandera] y actualiza los h2 HTML
 		codeLower = code.toLowerCase();
@@ -31,21 +60,93 @@
 					
 				}
 			}
-
-
-		if (pais == "China") {
-			capital = "Pekin";
-			$( "#pais" ).html("El país seleccionado " + pais);
-		    $( "#capital" ).html("La capital de " + pais + " es "  + capital);
-			$( "#bandera" ).html("La bandera es " + bandera);
-				
 		}
+
+	function creaNuevoMapa(code) {
+		
+		//Actualizar strPaisesSeleccionados
+		strPaisesSeleccionados.push(code);
+
+		//Actualizar strPaisesNoSeleccionados
+		var index = strPaisesNoSeleccionados.indexOf(code);
+		if (index > -1) {
+			strPaisesNoSeleccionados.splice(index, 1);
+		}
+
+		//Mapa nuevo
+		mapaNuevo = {
+			chart: {
+					spacingBottom: 20
+				},
+
+			colors: ['#596a72', '#ff7400'],
+
+			title: {
+					text: 'Mapa de países que ha visitado'
+				},
+
+			legend: {
+					enabled: true
+				},
+
+			plotOptions: {
+					series: {
+						point: {
+							events: {
+								click: function() {
+								creaNuevoMapa(this.code);
+								}
+
+							}
+						}
+					},
+					map: {
+						allAreas: false, //allAreas true por defecto
+						joinBy: ['iso-a2', 'code'],
+						dataLabels: {
+							enabled: false,
+							color: 'white',
+							formatter: function() {
+								if (this.point.properties && 
+									this.point.properties.labelrank.toString() < 5) {
+									return this.point.properties['iso-a2'];
+								}
+							},
+							format: null,
+							style: {
+								fontWeigth: 'bold'
+							}
+						},
+						mapData: Highcharts.maps['custom/world'],
+						tooltip: {
+							headerFormat: '',
+							pointFormat: '{point.name}: <b>{series.name} </b>'
+						}
+					}
+				},
+
+			series: [{
+					name: 'No he estado',
+					data: $.map(strPaisesNoSeleccionados, function (code) {
+						return {code: code};
+					})
+					},
+					{
+					name: 'He estado',
+					data: $.map(strPaisesSeleccionados, function(code) {
+						return {code: code};
+					})
+					}]
+
+		};
+
+		//Nuevo mapa se establece y se visualiza:
+		$('#container').highcharts('Map', mapaNuevo);
+
 	}
 
-	$(function () {
-
-		//Instanciate the map
-		$('#container').highcharts('Map', {
+	function creaMapaPolitico() {
+		return {
 			chart: {
 				spacingBottom: 20
 			},
@@ -127,16 +228,126 @@
 				})
 			}]
 
+		};
+	}
+
+	function creaMapaVacio() {
+		return {
+		chart: {
+				spacingBottom: 20
+			},
+
+		colors: ['#596a72', '#ff7400'],
+
+		title: {
+				text: 'Mapa de países que ha visitado'
+			},
+
+		legend: {
+				enabled: true
+			},
+
+		plotOptions: {
+				series: {
+					point: {
+						events: {
+							click: function() {
+							creaNuevoMapa(this.code);
+							}
+
+						}
+					}
+				},
+				map: {
+					allAreas: false, //allAreas true por defecto
+					joinBy: ['iso-a2', 'code'],
+					dataLabels: {
+						enabled: false,
+						color: 'white',
+						formatter: function() {
+							if (this.point.properties && 
+								this.point.properties.labelrank.toString() < 5) {
+								return this.point.properties['iso-a2'];
+							}
+						},
+						format: null,
+						style: {
+							fontWeigth: 'bold'
+						}
+					},
+					mapData: Highcharts.maps['custom/world'],
+					tooltip: {
+						headerFormat: '',
+						pointFormat: '{point.name}: <b>{series.name} </b>'
+					}
+				}
+			},
+
+		series: [{
+				name: 'No he estado',
+				data: $.map(strPaisesVacios, function (code) {
+					return {code: code};
+				})
+				},
+				{
+				name: 'He estado',
+				}]
+	};
+	}
+
+	mapaSeleccionado = mapaPolitico; //Por defecto mapaSeleccionado es mapaPolitico
+	
+
+
+	//Documento cargado:
+	$(function () {
+
+		//Actualizo strPaisesNoSeleccionados a partir del json (todos los países por defecto son no seleccionados)
+		for (indice in data) {
+			paisObjeto = data[indice];
+			strPaisesNoSeleccionados.push(paisObjeto["cca2"]);
+			strPaisesVacios.push(paisObjeto["cca2"]);
+		}
+
+		mapaPolitico = creaMapaPolitico();
+
+		//Instancia el mapa político.
+		$('#container').highcharts('Map', mapaPolitico);
+
+		//Si presionas botón "mapaVacio"
+		$( "#btnMapaVacio" ).click(function() {
+			//Paises no seleccionados vuelta a que sean todos (clonado)
+			strPaisesNoSeleccionados = strPaisesVacios.slice(0);
+			//Paises seleccionados vuelta a ser 0
+			strPaisesSeleccionados = [];
+
+			mapaVacio = creaMapaVacio();
+			$( '#container' ).highcharts('Map', mapaVacio);
+			$( '#textoSalida' ).hide(); //Esconde div
 		});
+
 	});
+
+
+
+
 	</script>
 
 	<div id="container" style="width:100%; height:600px;"></div>
-	<h2 id="pais"> El país seleccionado es:  </h2>
-	<h2 id="capital"> La capital de este país es:  </h2>
-	<h2 id="bandera"> La bandera de este país es: 
-	  <img id="banderaIMG" src="country-flags-master/png250px/ad.png" alt="Flag" height="35" width="42">
-	</h2>
+	
+
+	<button id="btnMapaVacio"> Mapa Vacio </button>
+	<button id="btnMapaRelleno"> Mapa Relleno </button>
+
+
+
+	<div id="textoSalida">
+		<p id="pais" class="parrafo1"> El país seleccionado es:  </p>
+		<p id="capital" class="parrafo1"> La capital de este país es:  </p>
+		<p id="bandera" class="parrafo1"> La bandera de este país es:   
+		  <img id="banderaIMG" src="country-flags-master/png250px/ad.png" alt="Flag" height="35" width="42">
+		</p>
+	</div>
 	
 	
 </body>
