@@ -20,13 +20,14 @@
 	$.getJSON("countries.json", function(data1) { data = data1 });
 	function escribePaisCapital(code) {
 		//TODO. Busca en un json el pais, devuelve [pais, capital, bandera] y actualiza los h2 HTML
-
+		codeLower = code.toLowerCase();
 			for (indice in data) {
 				objeto = data[indice];
 				if(objeto["cca2"] == code) {
 					//Actualizar html:
 					$( "#pais" ).html( "El país seleccionado es: " + objeto["name"]["common"]);
 					$( "#capital" ).html( "La capital de " + objeto["name"]["common"] + " es: " + objeto["capital"]);
+					$( "#banderaIMG ").attr("src", "country-flags-master/png250px/" + codeLower +".png");
 					
 				}
 			}
@@ -97,13 +98,13 @@
 
 			series: [{
 				name: 'Republic',
-				data: $.map(['AO', 'BO', 'BA', 'BF', 'BI', 'CM', 'CV', 'CF', 'TD', 'CL', 'CO', 'CR', 'CI', 'CD', 'DJ', 'EC', 'EG', 'SV', 'FM', 'FJ', 'FI', 'FR', 'GA', 'GE', 'GH', 'GN', 'GW', 'HN', 'HU', 'IN', 'IL', 'KE', 'KI', 'KG', 'LB', 'LR', 'MG', 'MV', 'ML', 'MH', 'MR', 'ME', 'MZ', 'NA', 'NR', 'NP', 'NI', 'CY', 'PW', 'PY', 'PE', 'PH', 'PR', 'TW', 'IE', 'CD', 'RO', 'RU', 'ST', 'SC', 'SL', 'SO', 'ZA', 'KR', 'LK', 'SY', 'TZ', 'GM', 'TG', 'TN', 'UG', 'UA', 'UY', 'VU', 'YE', 'ZM'], function (code) {
+				data: $.map(['AF','AO', 'BO', 'BA', 'BD','BF', 'BI', 'BJ', 'BW','CD', 'CG','CM', 'CV', 'CF', 'CR', 'TD', 'CL', 'CO', 'CR', 'CI', 'CD', 'DJ', 'DO','DZ' ,'EC', 'EG', 'GT', 'GY','HN', 'IT','SV', 'FM', 'FJ', 'FI', 'FR', 'GA', 'GE', 'GH', 'GN', 'GW', 'HN', 'HU', 'ID','IN', 'IL', 'IS', 'KE', 'KI', 'KG', 'LA','LB', 'LR', 'MG', 'MV', 'ML', 'MH', 'MR', 'ME', 'MN','MW','MZ', 'NA', 'NE','NR', 'NP', 'NI', 'CY','PA', 'PW', 'PY', 'PE', 'PH', 'PR','SN', 'SR','SS','TW', 'TJ','IE', 'CD', 'RO', 'RU', 'ST', 'SC', 'SL', 'SO', 'SX','ZA', 'KR', 'LK', 'SY', 'TZ', 'GM', 'TG', 'TN', 'UG', 'UA', 'UY', 'VU', 'YE', 'ZM'], function (code) {
 					return { code: code};
 				})
 			}, {
 				name: 'Dictatorship',
 				data: $.map(['BY', 'CM', 'CN', 'CU', 'EG', 'GQ', 'ER', 'ET', 'IR', 'KZ',
-				 'LY', 'MG', 'MM', 'KN', 'RW', 'SD', 'SY', 'TN', 'TM', 'UZ', 'VN', 'ZW'], function (code) {
+				 'LY', 'MG', 'MM', 'KN', 'KP','RW', 'SD', 'SY', 'TN', 'TM', 'UZ', 'VN', 'ZW'], function (code) {
 					return {code: code};
 				})
 			}, {
@@ -118,8 +119,8 @@
 				})
 			}, {
 				name: 'Constitutional Monarchy',
-				data: $.map(['AD', 'AW', 'AU', 'BH', 'BB', 'BZ','BT', 'KH', 'CA', 'DK', 'GB', 'GD', 'IM',
-					'JM', 'JP', 'JE', 'JO', 'NL', 'KW', 'LS', 'LI', 'LU', 'MY', 'MC', 'MA', 'NZ', 'NU', 
+				data: $.map(['AD', 'AW', 'AU', 'BH', 'BB', 'BZ','BT', 'KH', 'CA', 'DK', 'EH','GB', 'GL', 'GD', 'IM',
+					'JM', 'JP', 'JE', 'JO', 'NL', 'KW', 'LC','LS', 'LI', 'LU', 'MY', 'MC', 'MA', 'NZ', 'NU', 
 					'GB', 'NO', 'PG', 'QA', 'KN', 'LC', 'VC', 'WS', 'GB', 'SB', 'ES', 'SE', 'TH', 'BS', 
 					'TK', 'TO', 'TV', 'ZA'], function (code) {
 					return {code: code};
@@ -133,7 +134,9 @@
 	<div id="container" style="width:100%; height:600px;"></div>
 	<h2 id="pais"> El país seleccionado es:  </h2>
 	<h2 id="capital"> La capital de este país es:  </h2>
-	<h2 id="bandera"> La bandera de este país es:  </h2>
+	<h2 id="bandera"> La bandera de este país es: 
+	  <img id="banderaIMG" src="country-flags-master/png250px/ad.png" alt="Flag" height="35" width="42">
+	</h2>
 	
 	
 </body>
